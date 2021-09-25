@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>i like you</title>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
     <style>
         * {
             margin: 0;
@@ -194,7 +198,7 @@
 
             function musicPlay() {
                 let audio = document.getElementById('audio')
-               document.getElementById('audio').addEventListener("click", (e) => {
+                document.getElementById('audio').addEventListener("click", (e) => {
                     setTimeout(() => {
                         if (audio.paused) {
                             audio.play()
