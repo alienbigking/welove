@@ -3,7 +3,30 @@
 <head>
     <title>3d相册</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" name="viewport">
+    <!-- Google字体，根据需要更换国内的在线字体服务或者用系统默认的字体，非必须加载项 -->
+    <link href="./expand/dialog/index_files/lato.css" rel="stylesheet" type="text/css">
+    <!-- DEMO PAGE CSS -->
+    <!-- bootstrap框架 -->
+    <link href="./expand/dialog/index_files/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!-- fontawesome是一个免费的图标字体，根据自己的项目需要加载（现在网页基本上用这用图标字体了，代替图片，加快网页速度，节省流量等一系列优点，不知道的朋友请百度）-->
+    <link href="./expand/dialog/index_files/fontawesome.css" rel="stylesheet" type="text/css">
+    <!-- 下面两个css为demo样式，demo网页背景相关的样式，个人项目中无需引入 -->
+    <link href="./expand/dialog/index_files/default.css" rel="stylesheet" type="text/css">
+    <link href="./expand/dialog/index_files/style.css" rel="stylesheet" type="text/css">
+    <!-- END DEMO PAGE CSS -->
+    <!-- flavr CSS 下面是本插件的核心css文件，必须加载-->
+    <!-- animate.css 是github上很受欢迎的css3动画类库，本插件的所有动画都是靠animate.css实现的，如果你不需要弹出层有动画效果的话也可以不用加载 -->
+    <link href="./expand/dialog/index_files/animate.css" rel="stylesheet" type="text/css">
+    <!-- 插件样式，必须加载 -->
+    <link href="./expand/dialog/index_files/flavr.css" rel="stylesheet" type="text/css">
+    <!-- END flavr CSS -->
+
+
+    <!--倒计时-->
+    <link rel="stylesheet" type="text/css" href="./expand/time/css/countdown.css">
+
+    <link href="css/animate.min.css" rel="stylesheet">
     <style>
         html, body {
             height: 100%;
@@ -160,7 +183,16 @@
             white-space: nowrap;
         }
     </style>
-    <link rel="stylesheet" href="css/animate.min.css">
+
+    <style>
+        .flavr-outer .flavr-content {
+            color: pink !important;
+        }
+
+        .flavr-outer .flavr-toolbar a {
+            color: pink !important;
+        }
+    </style>
 </head>
 <body id="body">
 <script src="js/jquery.min.js"></script>
@@ -178,490 +210,603 @@
     <button id="helix"></button>
     <button id="grid"></button>
     <div class="music">
-        <audio controls="controls" autoplay="true" loop=-1 id="audio">
+        <audio style="display: none" autoplay="true" controls="controls" id="audio" loop=-1>
             <source src="http://mp4-333ttt.qqxzb-img.com/2016/1/06m/25/199251943186.m4a?st=Nm-t1fAJhdrIYjt4xbbnlA&e=1632584893"
                     type="audio/mpeg"/>
         </audio>
     </div>
 
 </div>
+
+<!--倒计时-->
+<div id="times" class="jq22-container">
+    <div class="jq22-content bgcolor-8">
+        <div class="count"></div>
+        <script id="count-template" type="text/template">
+            <span class="current top <%= currentSize %>"><%= time %></span>
+            <span class="next top <%= nextSize %>"><%= nextTime %></span>
+            <span class="current bottom <%= currentSize %>"><%= time %></span>
+            <span class="next bottom <%= nextSize %>"><%= nextTime %></span>
+        </script>
+    </div>
+
+</div>
+
+
+<!-- start--dialog -->
+<!-- jQuery和bootstrap必须加载，这个是弹窗的基本提供 -->
+<!--<script type="text/javascript" src="./expand/dialog/index_files/jquery.min.js"></script>-->
+<script src="./expand/dialog/index_files/bootstrap.min.js" type="text/javascript"></script>
+<!-- 下面是插件核心代码，必须加载 -->
+<script src="./expand/dialog/index_files/flavr.min.js" type="text/javascript"></script>
+<!-- END flavr SCRIPT -->
+<!-- end--dialog -->
+
+<!--倒计时-->
+<script src='./expand/time/js/underscore-1.5.2-min.js'></script>
+
+
 <script>
-    const myaudio = document.getElementById('audio')
-    let audioPlay = myaudio.play();
-    audioPlay.then(() => {
-        console.log('可以自动播放');
-
-        myaudio.play();
-    }).catch((err) => {
-        myaudio.play();
-        console.log(err);
-
-        console.log("不允许自动播放");
-
-        //音频元素只在用户交互后调用.play(),
-
-
-    });
-
-    // window.addEventListener("audio", function () { //audio 标签的id
-    //     audio.play();
-    // })
-</script>
-
-<script>
-    const bodyEle = document.getElementById('body')
-
-
-    const personArray = new Array;
-    let CurPersonNum = 0;
-    let i;
-    // animate
-    const _in = ['bounceIn', 'bounceInDown', 'bounceInLeft', 'bounceInRight', 'bounceInUp', 'fadeIn', 'fadeInDown', 'fadeInDownBig', 'fadeInLeft', 'fadeInLeftBig', 'fadeInRight', 'fadeInRightBig', 'fadeInUp', 'fadeInUpBig', 'rotateIn', 'rotateInDownLeft', 'rotateInDownRight', 'rotateInUpLeft', 'rotateInUpRight', 'slideInDown', 'slideInLeft', 'slideInRight'];
-    const _out = ['bounceOut', 'bounceOutDown', 'bounceOutLeft', 'bounceOutRight', 'bounceOutUp', 'fadeOut', 'fadeOutDown', 'fadeOutDownBig', 'fadeOutLeft', 'fadeOutLeftBig', 'fadeOutRight', 'fadeOutRightBig', 'fadeOutUp', 'fadeOutUpBig', 'rotateOut', 'rotateOutDownLeft', 'rotateOutDownRight', 'rotateOutUpLeft', 'rotateOutUpRight', 'slideOutDown', 'slideOutLeft', 'slideOutRight'];
-
-    let count = 1;
-    // 模拟推送数据
-    const s = setInterval(function () {
-        // get animate
-        const rand_in = parseInt(Math.random() * _in.length, 10);
-        const rand_out = parseInt(Math.random() * _out.length, 10);
-
-        if (CurPersonNum >= personArray.length) {
-            CurPersonNum = 0;
-            count = 1;
-        }
-        $('.show_info').show();
-        $('.show_info').addClass(_in[rand_in]);
-        setTimeout(function () {
-            $('.show_info').removeClass(_in[rand_in]);
-            // 更改展示的图片
-            const img = document.getElementsByClassName('element')[CurPersonNum].getElementsByTagName('img')[0];
-            if (CurPersonNum == count * 20) {
-                ++count;
+    window.onload = function () {
+        new $.flavr({
+            content: '丹妮！，准备好了吗',
+            dialog: 'confirm',
+            buttons: {
+                confirm: {
+                    text: '我准备好了',
+                    addClass: 'confirm-btn',
+                    action: function () {
+                        start()
+                        playMusic()
+                        countdown()
+                    }
+                }
             }
-            img.setAttribute('src', '../images/' + count + '.jpg');
-            ++CurPersonNum;
-            setTimeout(function () {
-                $('.show_info').addClass(_out[rand_out]);
-                setTimeout(function () {
-                    $('.show_info').removeClass(_out[rand_out]);
-                    $('.show_info').hide();
-                }, 1000);
-            }, 1500);
-        }, 1000);
-    }, 100);
-
-    // 生成虚拟数据
-    for (i = 0; i < 199; i++) {
-        personArray.push({
-            image: "../images/1.jpg"
         });
     }
 
-    const table = new Array;
-    for (i = 0; i < personArray.length; i++) {
-        table[i] = new Object();
-        if (i < personArray.length) {
-            table[i] = personArray[i];
-            table[i].src = personArray[i].thumb_image;
-        }
-        table[i].p_x = i % 20 + 1;
-        table[i].p_y = Math.floor(i / 20) + 1;
-    }
+    function start() {
+        console.log('调用触发了吗')
+        const bodyEle = document.getElementById('body')
 
 
-    /*var table = [
-        "H", "Hydrogen", "1.00794", 1, 1,
-        "He", "Helium", "4.002602", 18, 1,
-        "Li", "Lithium", "6.941", 1, 2,
-        "Be", "Beryllium", "9.012182", 2, 2,
-        "B", "Boron", "10.811", 13, 2,
-        "C", "Carbon", "12.0107", 14, 2,
-        "N", "Nitrogen", "14.0067", 15, 2,
-        "O", "Oxygen", "15.9994", 16, 2,
-        "F", "Fluorine", "18.9984032", 17, 2,
-        "Ne", "Neon", "20.1797", 18, 2,
-        "Na", "Sodium", "22.98976...", 1, 3,
-        "Mg", "Magnesium", "24.305", 2, 3,
-        "Al", "Aluminium", "26.9815386", 13, 3,
-        "Si", "Silicon", "28.0855", 14, 3,
-        "P", "Phosphorus", "30.973762", 15, 3,
-        "S", "Sulfur", "32.065", 16, 3,
-        "Cl", "Chlorine", "35.453", 17, 3,
-        "Ar", "Argon", "39.948", 18, 3,
-        "K", "Potassium", "39.948", 1, 4,
-        "Ca", "Calcium", "40.078", 2, 4,
-        "Sc", "Scandium", "44.955912", 3, 4,
-        "Ti", "Titanium", "47.867", 4, 4,
-        "V", "Vanadium", "50.9415", 5, 4,
-        "Cr", "Chromium", "51.9961", 6, 4,
-        "Mn", "Manganese", "54.938045", 7, 4,
-        "Fe", "Iron", "55.845", 8, 4,
-        "Co", "Cobalt", "58.933195", 9, 4,
-        "Ni", "Nickel", "58.6934", 10, 4,
-        "Cu", "Copper", "63.546", 11, 4,
-        "Zn", "Zinc", "65.38", 12, 4,
-        "Ga", "Gallium", "69.723", 13, 4,
-        "Ge", "Germanium", "72.63", 14, 4,
-        "As", "Arsenic", "74.9216", 15, 4,
-        "Se", "Selenium", "78.96", 16, 4,
-        "Br", "Bromine", "79.904", 17, 4,
-        "Kr", "Krypton", "83.798", 18, 4,
-        "Rb", "Rubidium", "85.4678", 1, 5,
-        "Sr", "Strontium", "87.62", 2, 5,
-        "Y", "Yttrium", "88.90585", 3, 5,
-        "Zr", "Zirconium", "91.224", 4, 5,
-        "Nb", "Niobium", "92.90628", 5, 5,
-        "Mo", "Molybdenum", "95.96", 6, 5,
-        "Tc", "Technetium", "(98)", 7, 5,
-        "Ru", "Ruthenium", "101.07", 8, 5,
-        "Rh", "Rhodium", "102.9055", 9, 5,
-        "Pd", "Palladium", "106.42", 10, 5,
-        "Ag", "Silver", "107.8682", 11, 5,
-        "Cd", "Cadmium", "112.411", 12, 5,
-        "In", "Indium", "114.818", 13, 5,
-        "Sn", "Tin", "118.71", 14, 5,
-        "Sb", "Antimony", "121.76", 15, 5,
-        "Te", "Tellurium", "127.6", 16, 5,
-        "I", "Iodine", "126.90447", 17, 5,
-        "Xe", "Xenon", "131.293", 18, 5,
-        "Cs", "Caesium", "132.9054", 1, 6,
-        "Ba", "Barium", "132.9054", 2, 6,
-        "La", "Lanthanum", "138.90547", 4, 9,
-        "Ce", "Cerium", "140.116", 5, 9,
-        "Pr", "Praseodymium", "140.90765", 6, 9,
-        "Nd", "Neodymium", "144.242", 7, 9,
-        "Pm", "Promethium", "(145)", 8, 9,
-        "Sm", "Samarium", "150.36", 9, 9,
-        "Eu", "Europium", "151.964", 10, 9,
-        "Gd", "Gadolinium", "157.25", 11, 9,
-        "Tb", "Terbium", "158.92535", 12, 9,
-        "Dy", "Dysprosium", "162.5", 13, 9,
-        "Ho", "Holmium", "164.93032", 14, 9,
-        "Er", "Erbium", "167.259", 15, 9,
-        "Tm", "Thulium", "168.93421", 16, 9,
-        "Yb", "Ytterbium", "173.054", 17, 9,
-        "Lu", "Lutetium", "174.9668", 18, 9,
-        "Hf", "Hafnium", "178.49", 4, 6,
-        "Ta", "Tantalum", "180.94788", 5, 6,
-        "W", "Tungsten", "183.84", 6, 6,
-        "Re", "Rhenium", "186.207", 7, 6,
-        "Os", "Osmium", "190.23", 8, 6,
-        "Ir", "Iridium", "192.217", 9, 6,
-        "Pt", "Platinum", "195.084", 10, 6,
-        "Au", "Gold", "196.966569", 11, 6,
-        "Hg", "Mercury", "200.59", 12, 6,
-        "Tl", "Thallium", "204.3833", 13, 6,
-        "Pb", "Lead", "207.2", 14, 6,
-        "Bi", "Bismuth", "208.9804", 15, 6,
-        "Po", "Polonium", "(209)", 16, 6,
-        "At", "Astatine", "(210)", 17, 6,
-        "Rn", "Radon", "(222)", 18, 6,
-        "Fr", "Francium", "(223)", 1, 7,
-        "Ra", "Radium", "(226)", 2, 7,
-        "Ac", "Actinium", "(227)", 4, 10,
-        "Th", "Thorium", "232.03806", 5, 10,
-        "Pa", "Protactinium", "231.0588", 6, 10,
-        "U", "Uranium", "238.02891", 7, 10,
-        "Np", "Neptunium", "(237)", 8, 10,
-        "Pu", "Plutonium", "(244)", 9, 10,
-        "Am", "Americium", "(243)", 10, 10,
-        "Cm", "Curium", "(247)", 11, 10,
-        "Bk", "Berkelium", "(247)", 12, 10,
-        "Cf", "Californium", "(251)", 13, 10,
-        "Es", "Einstenium", "(252)", 14, 10,
-        "Fm", "Fermium", "(257)", 15, 10,
-        "Md", "Mendelevium", "(258)", 16, 10,
-        "No", "Nobelium", "(259)", 17, 10,
-        "Lr", "Lawrencium", "(262)", 18, 10,
-        "Rf", "Rutherfordium", "(267)", 4, 7,
-        "Db", "Dubnium", "(268)", 5, 7,
-        "Sg", "Seaborgium", "(271)", 6, 7,
-        "Bh", "Bohrium", "(272)", 7, 7,
-        "Hs", "Hassium", "(270)", 8, 7,
-        "Mt", "Meitnerium", "(276)", 9, 7,
-        "Ds", "Darmstadium", "(281)", 10, 7,
-        "Rg", "Roentgenium", "(280)", 11, 7,
-        "Cn", "Copernicium", "(285)", 12, 7,
-        "Uut", "Unutrium", "(284)", 13, 7,
-        "Fl", "Flerovium", "(289)", 14, 7,
-        "Uup", "Ununpentium", "(288)", 15, 7,
-        "Lv", "Livermorium", "(293)", 16, 7,
-        "Uus", "Ununseptium", "(294)", 17, 7,
-        "Uuo", "Ununoctium", "(294)", 18, 7
-    ];*/
-
-    let camera, scene, renderer;
-    let controls;
-
-    const objects = [];
-    const targets = {table: [], sphere: [], helix: [], grid: []};
-
-    init();
-    animate();
-
-    function init() {
-
-        let theta;
-        let object;
+        const personArray = new Array;
+        let CurPersonNum = 0;
         let i;
-        camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.z = 3000;
+        // animate
+        const _in = ['bounceIn', 'bounceInDown', 'bounceInLeft', 'bounceInRight', 'bounceInUp', 'fadeIn', 'fadeInDown', 'fadeInDownBig', 'fadeInLeft', 'fadeInLeftBig', 'fadeInRight', 'fadeInRightBig', 'fadeInUp', 'fadeInUpBig', 'rotateIn', 'rotateInDownLeft', 'rotateInDownRight', 'rotateInUpLeft', 'rotateInUpRight', 'slideInDown', 'slideInLeft', 'slideInRight'];
+        const _out = ['bounceOut', 'bounceOutDown', 'bounceOutLeft', 'bounceOutRight', 'bounceOutUp', 'fadeOut', 'fadeOutDown', 'fadeOutDownBig', 'fadeOutLeft', 'fadeOutLeftBig', 'fadeOutRight', 'fadeOutRightBig', 'fadeOutUp', 'fadeOutUpBig', 'rotateOut', 'rotateOutDownLeft', 'rotateOutDownRight', 'rotateOutUpLeft', 'rotateOutUpRight', 'slideOutDown', 'slideOutLeft', 'slideOutRight'];
 
-        scene = new THREE.Scene();
+        let count = 1;
+        // 模拟推送数据
+        const s = setInterval(function () {
+            // get animate
+            const rand_in = parseInt(Math.random() * _in.length, 10);
+            const rand_out = parseInt(Math.random() * _out.length, 10);
 
-        // table
-
-        for (i = 0; i < table.length; i++) {
-
-            const element = document.createElement('div');
-            element.className = 'element';
-            element.style.backgroundColor = 'rgba(0,127,127,' + (Math.random() * 0.5 + 0.25) + ')';
-
-            const img = document.createElement('img');
-            img.src = table[i].image;
-            element.appendChild(img);
-
-
-            object = new THREE.CSS3DObject(element);
-            object.position.x = Math.random() * 4000 - 2000;
-            object.position.y = Math.random() * 4000 - 2000;
-            object.position.z = Math.random() * 4000 - 2000;
-            scene.add(object);
-
-            objects.push(object);
-
-            // 表格需要坐标进行排序的
-            object = new THREE.Object3D();
-            // object.position.x = ( table[ i + 3 ] * 140 ) - 1330;
-            // object.position.y = - ( table[ i + 4 ] * 180 ) + 990;
-            object.position.x = (table[i].p_x * 140) - 1330;
-            object.position.y = -(table[i].p_y * 180) + 990;
-
-            targets.table.push(object);
-
-        }
-
-        // sphere
-
-        let vector = new THREE.Vector3();
-        const spherical = new THREE.Spherical();
-
-        i = 0;
-        let l = objects.length;
-        for (; i < l; i++) {
-
-            const phi = Math.acos(-1 + (2 * i) / l);
-            theta = Math.sqrt(l * Math.PI) * phi;
-
-            object = new THREE.Object3D();
-
-            spherical.set(800, phi, theta);
-
-            object.position.setFromSpherical(spherical);
-
-            vector.copy(object.position).multiplyScalar(2);
-
-            object.lookAt(vector);
-
-            targets.sphere.push(object);
-
-        }
-
-        // helix
-
-        vector = new THREE.Vector3();
-        const cylindrical = new THREE.Cylindrical();
-
-        i = 0;
-        l = objects.length;
-        for (; i < l; i++) {
-
-            theta = i * 0.175 + Math.PI;
-            const y = -(i * 5) + 450;
-
-            object = new THREE.Object3D();
-
-            // 参数一 圈的大小 参数二 左右间距 参数三 上下间距
-            cylindrical.set(900, theta, y);
-
-            object.position.setFromCylindrical(cylindrical);
-
-            vector.x = object.position.x * 2;
-            vector.y = object.position.y;
-            vector.z = object.position.z * 2;
-
-            object.lookAt(vector);
-
-            targets.helix.push(object);
-
-        }
-
-        // grid
-
-        for (i = 0; i < objects.length; i++) {
-
-            object = new THREE.Object3D();
-
-            object.position.x = ((i % 5) * 400) - 800; // 400 图片的左右间距  800 x轴中心店
-            object.position.y = (-(Math.floor(i / 5) % 5) * 300) + 500;  // 500 y轴中心店
-            object.position.z = (Math.floor(i / 25)) * 200 - 800;// 300调整 片间距 800z轴中心店
-
-            targets.grid.push(object);
-
-        }
-
-        //渲染
-        renderer = new THREE.CSS3DRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.domElement.style.position = 'absolute';
-        document.getElementById('container').appendChild(renderer.domElement);
-
-        // 鼠标控制
-        controls = new THREE.TrackballControls(camera, renderer.domElement);
-        controls.rotateSpeed = 0.5;
-        controls.minDistance = 500;
-        controls.maxDistance = 6000;
-        controls.addEventListener('change', render);
-
-        // 自动更换
-        let ini = 0;
-        setInterval(function () {
-            ini = ini >= 3 ? 0 : ini;
-            ++ini;
-            switch (ini) {
-                case 1:
-                    transform(targets.sphere, 1000);
-                    break;
-                case 2:
-                    transform(targets.helix, 1000);
-                    break;
-                case 3:
-                    transform(targets.grid, 1000);
-                    break;
+            if (CurPersonNum >= personArray.length) {
+                CurPersonNum = 0;
+                count = 1;
             }
-        }, 8000);
+            $('.show_info').show();
+            $('.show_info').addClass(_in[rand_in]);
+            setTimeout(function () {
+                $('.show_info').removeClass(_in[rand_in]);
+                // 更改展示的图片
+                const img = document.getElementsByClassName('element')[CurPersonNum].getElementsByTagName('img')[0];
+                if (CurPersonNum == count * 20) {
+                    ++count;
+                }
+                img.setAttribute('src', '../images/' + count + '.jpg');
+                ++CurPersonNum;
+                setTimeout(function () {
+                    $('.show_info').addClass(_out[rand_out]);
+                    setTimeout(function () {
+                        $('.show_info').removeClass(_out[rand_out]);
+                        $('.show_info').hide();
+                    }, 1000);
+                }, 1500);
+            }, 1000);
+        }, 100);
 
-        let button = document.getElementById('table');
-        button.addEventListener('click', function (event) {
-            transform(targets.table, 1000);
-        }, false);
+        // 生成虚拟数据
+        for (i = 0; i < 199; i++) {
+            personArray.push({
+                image: "../images/1.jpg"
+            });
+        }
 
-        button = document.getElementById('sphere');
-        button.addEventListener('click', function (event) {
-            transform(targets.sphere, 2000);
-        }, false);
-
-        button = document.getElementById('helix');
-        button.addEventListener('click', function (event) {
-            transform(targets.helix, 2000);
-        }, false);
-
-        button = document.getElementById('grid');
-        button.addEventListener('click', function (event) {
-            transform(targets.grid, 2000);
-        }, false);
-
-        transform(targets.table, 2000);
-
-        //
-
-        window.addEventListener('resize', onWindowResize, false);
+        const table = new Array;
+        for (i = 0; i < personArray.length; i++) {
+            table[i] = new Object();
+            if (i < personArray.length) {
+                table[i] = personArray[i];
+                table[i].src = personArray[i].thumb_image;
+            }
+            table[i].p_x = i % 20 + 1;
+            table[i].p_y = Math.floor(i / 20) + 1;
+        }
 
 
-        initBack()
-    }
+        /*var table = [
+            "H", "Hydrogen", "1.00794", 1, 1,
+            "He", "Helium", "4.002602", 18, 1,
+            "Li", "Lithium", "6.941", 1, 2,
+            "Be", "Beryllium", "9.012182", 2, 2,
+            "B", "Boron", "10.811", 13, 2,
+            "C", "Carbon", "12.0107", 14, 2,
+            "N", "Nitrogen", "14.0067", 15, 2,
+            "O", "Oxygen", "15.9994", 16, 2,
+            "F", "Fluorine", "18.9984032", 17, 2,
+            "Ne", "Neon", "20.1797", 18, 2,
+            "Na", "Sodium", "22.98976...", 1, 3,
+            "Mg", "Magnesium", "24.305", 2, 3,
+            "Al", "Aluminium", "26.9815386", 13, 3,
+            "Si", "Silicon", "28.0855", 14, 3,
+            "P", "Phosphorus", "30.973762", 15, 3,
+            "S", "Sulfur", "32.065", 16, 3,
+            "Cl", "Chlorine", "35.453", 17, 3,
+            "Ar", "Argon", "39.948", 18, 3,
+            "K", "Potassium", "39.948", 1, 4,
+            "Ca", "Calcium", "40.078", 2, 4,
+            "Sc", "Scandium", "44.955912", 3, 4,
+            "Ti", "Titanium", "47.867", 4, 4,
+            "V", "Vanadium", "50.9415", 5, 4,
+            "Cr", "Chromium", "51.9961", 6, 4,
+            "Mn", "Manganese", "54.938045", 7, 4,
+            "Fe", "Iron", "55.845", 8, 4,
+            "Co", "Cobalt", "58.933195", 9, 4,
+            "Ni", "Nickel", "58.6934", 10, 4,
+            "Cu", "Copper", "63.546", 11, 4,
+            "Zn", "Zinc", "65.38", 12, 4,
+            "Ga", "Gallium", "69.723", 13, 4,
+            "Ge", "Germanium", "72.63", 14, 4,
+            "As", "Arsenic", "74.9216", 15, 4,
+            "Se", "Selenium", "78.96", 16, 4,
+            "Br", "Bromine", "79.904", 17, 4,
+            "Kr", "Krypton", "83.798", 18, 4,
+            "Rb", "Rubidium", "85.4678", 1, 5,
+            "Sr", "Strontium", "87.62", 2, 5,
+            "Y", "Yttrium", "88.90585", 3, 5,
+            "Zr", "Zirconium", "91.224", 4, 5,
+            "Nb", "Niobium", "92.90628", 5, 5,
+            "Mo", "Molybdenum", "95.96", 6, 5,
+            "Tc", "Technetium", "(98)", 7, 5,
+            "Ru", "Ruthenium", "101.07", 8, 5,
+            "Rh", "Rhodium", "102.9055", 9, 5,
+            "Pd", "Palladium", "106.42", 10, 5,
+            "Ag", "Silver", "107.8682", 11, 5,
+            "Cd", "Cadmium", "112.411", 12, 5,
+            "In", "Indium", "114.818", 13, 5,
+            "Sn", "Tin", "118.71", 14, 5,
+            "Sb", "Antimony", "121.76", 15, 5,
+            "Te", "Tellurium", "127.6", 16, 5,
+            "I", "Iodine", "126.90447", 17, 5,
+            "Xe", "Xenon", "131.293", 18, 5,
+            "Cs", "Caesium", "132.9054", 1, 6,
+            "Ba", "Barium", "132.9054", 2, 6,
+            "La", "Lanthanum", "138.90547", 4, 9,
+            "Ce", "Cerium", "140.116", 5, 9,
+            "Pr", "Praseodymium", "140.90765", 6, 9,
+            "Nd", "Neodymium", "144.242", 7, 9,
+            "Pm", "Promethium", "(145)", 8, 9,
+            "Sm", "Samarium", "150.36", 9, 9,
+            "Eu", "Europium", "151.964", 10, 9,
+            "Gd", "Gadolinium", "157.25", 11, 9,
+            "Tb", "Terbium", "158.92535", 12, 9,
+            "Dy", "Dysprosium", "162.5", 13, 9,
+            "Ho", "Holmium", "164.93032", 14, 9,
+            "Er", "Erbium", "167.259", 15, 9,
+            "Tm", "Thulium", "168.93421", 16, 9,
+            "Yb", "Ytterbium", "173.054", 17, 9,
+            "Lu", "Lutetium", "174.9668", 18, 9,
+            "Hf", "Hafnium", "178.49", 4, 6,
+            "Ta", "Tantalum", "180.94788", 5, 6,
+            "W", "Tungsten", "183.84", 6, 6,
+            "Re", "Rhenium", "186.207", 7, 6,
+            "Os", "Osmium", "190.23", 8, 6,
+            "Ir", "Iridium", "192.217", 9, 6,
+            "Pt", "Platinum", "195.084", 10, 6,
+            "Au", "Gold", "196.966569", 11, 6,
+            "Hg", "Mercury", "200.59", 12, 6,
+            "Tl", "Thallium", "204.3833", 13, 6,
+            "Pb", "Lead", "207.2", 14, 6,
+            "Bi", "Bismuth", "208.9804", 15, 6,
+            "Po", "Polonium", "(209)", 16, 6,
+            "At", "Astatine", "(210)", 17, 6,
+            "Rn", "Radon", "(222)", 18, 6,
+            "Fr", "Francium", "(223)", 1, 7,
+            "Ra", "Radium", "(226)", 2, 7,
+            "Ac", "Actinium", "(227)", 4, 10,
+            "Th", "Thorium", "232.03806", 5, 10,
+            "Pa", "Protactinium", "231.0588", 6, 10,
+            "U", "Uranium", "238.02891", 7, 10,
+            "Np", "Neptunium", "(237)", 8, 10,
+            "Pu", "Plutonium", "(244)", 9, 10,
+            "Am", "Americium", "(243)", 10, 10,
+            "Cm", "Curium", "(247)", 11, 10,
+            "Bk", "Berkelium", "(247)", 12, 10,
+            "Cf", "Californium", "(251)", 13, 10,
+            "Es", "Einstenium", "(252)", 14, 10,
+            "Fm", "Fermium", "(257)", 15, 10,
+            "Md", "Mendelevium", "(258)", 16, 10,
+            "No", "Nobelium", "(259)", 17, 10,
+            "Lr", "Lawrencium", "(262)", 18, 10,
+            "Rf", "Rutherfordium", "(267)", 4, 7,
+            "Db", "Dubnium", "(268)", 5, 7,
+            "Sg", "Seaborgium", "(271)", 6, 7,
+            "Bh", "Bohrium", "(272)", 7, 7,
+            "Hs", "Hassium", "(270)", 8, 7,
+            "Mt", "Meitnerium", "(276)", 9, 7,
+            "Ds", "Darmstadium", "(281)", 10, 7,
+            "Rg", "Roentgenium", "(280)", 11, 7,
+            "Cn", "Copernicium", "(285)", 12, 7,
+            "Uut", "Unutrium", "(284)", 13, 7,
+            "Fl", "Flerovium", "(289)", 14, 7,
+            "Uup", "Ununpentium", "(288)", 15, 7,
+            "Lv", "Livermorium", "(293)", 16, 7,
+            "Uus", "Ununseptium", "(294)", 17, 7,
+            "Uuo", "Ununoctium", "(294)", 18, 7
+        ];*/
 
-    function transform(targets, duration) {
+        let camera, scene, renderer;
+        let controls;
 
-        TWEEN.removeAll();
+        const objects = [];
+        const targets = {table: [], sphere: [], helix: [], grid: []};
 
-        for (let i = 0; i < objects.length; i++) {
+        init();
+        animate();
 
-            const object = objects[i];
-            const target = targets[i];
+        function init() {
 
-            new TWEEN.Tween(object.position)
-                .to({
-                    x: target.position.x,
-                    y: target.position.y,
-                    z: target.position.z
-                }, Math.random() * duration + duration)
-                .easing(TWEEN.Easing.Exponential.InOut)
+            let theta;
+            let object;
+            let i;
+            camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.z = 3000;
+
+            scene = new THREE.Scene();
+
+            // table
+
+            for (i = 0; i < table.length; i++) {
+
+                const element = document.createElement('div');
+                element.className = 'element';
+                element.style.backgroundColor = 'rgba(0,127,127,' + (Math.random() * 0.5 + 0.25) + ')';
+
+                const img = document.createElement('img');
+                img.src = table[i].image;
+                element.appendChild(img);
+
+
+                object = new THREE.CSS3DObject(element);
+                object.position.x = Math.random() * 4000 - 2000;
+                object.position.y = Math.random() * 4000 - 2000;
+                object.position.z = Math.random() * 4000 - 2000;
+                scene.add(object);
+
+                objects.push(object);
+
+                // 表格需要坐标进行排序的
+                object = new THREE.Object3D();
+                // object.position.x = ( table[ i + 3 ] * 140 ) - 1330;
+                // object.position.y = - ( table[ i + 4 ] * 180 ) + 990;
+                object.position.x = (table[i].p_x * 140) - 1330;
+                object.position.y = -(table[i].p_y * 180) + 990;
+
+                targets.table.push(object);
+
+            }
+
+            // sphere
+
+            let vector = new THREE.Vector3();
+            const spherical = new THREE.Spherical();
+
+            i = 0;
+            let l = objects.length;
+            for (; i < l; i++) {
+
+                const phi = Math.acos(-1 + (2 * i) / l);
+                theta = Math.sqrt(l * Math.PI) * phi;
+
+                object = new THREE.Object3D();
+
+                spherical.set(800, phi, theta);
+
+                object.position.setFromSpherical(spherical);
+
+                vector.copy(object.position).multiplyScalar(2);
+
+                object.lookAt(vector);
+
+                targets.sphere.push(object);
+
+            }
+
+            // helix
+
+            vector = new THREE.Vector3();
+            const cylindrical = new THREE.Cylindrical();
+
+            i = 0;
+            l = objects.length;
+            for (; i < l; i++) {
+
+                theta = i * 0.175 + Math.PI;
+                const y = -(i * 5) + 450;
+
+                object = new THREE.Object3D();
+
+                // 参数一 圈的大小 参数二 左右间距 参数三 上下间距
+                cylindrical.set(900, theta, y);
+
+                object.position.setFromCylindrical(cylindrical);
+
+                vector.x = object.position.x * 2;
+                vector.y = object.position.y;
+                vector.z = object.position.z * 2;
+
+                object.lookAt(vector);
+
+                targets.helix.push(object);
+
+            }
+
+            // grid
+
+            for (i = 0; i < objects.length; i++) {
+
+                object = new THREE.Object3D();
+
+                object.position.x = ((i % 5) * 400) - 800; // 400 图片的左右间距  800 x轴中心店
+                object.position.y = (-(Math.floor(i / 5) % 5) * 300) + 500;  // 500 y轴中心店
+                object.position.z = (Math.floor(i / 25)) * 200 - 800;// 300调整 片间距 800z轴中心店
+
+                targets.grid.push(object);
+
+            }
+
+            //渲染
+            renderer = new THREE.CSS3DRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.domElement.style.position = 'absolute';
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            // 鼠标控制
+            controls = new THREE.TrackballControls(camera, renderer.domElement);
+            controls.rotateSpeed = 0.5;
+            controls.minDistance = 500;
+            controls.maxDistance = 6000;
+            controls.addEventListener('change', render);
+
+            // 自动更换
+            let ini = 0;
+            setInterval(function () {
+                ini = ini >= 3 ? 0 : ini;
+                ++ini;
+                switch (ini) {
+                    case 1:
+                        transform(targets.sphere, 1000);
+                        break;
+                    case 2:
+                        transform(targets.helix, 1000);
+                        break;
+                    case 3:
+                        transform(targets.grid, 1000);
+                        break;
+                }
+            }, 8000);
+
+            let button = document.getElementById('table');
+            button.addEventListener('click', function (event) {
+                transform(targets.table, 1000);
+            }, false);
+
+            button = document.getElementById('sphere');
+            button.addEventListener('click', function (event) {
+                transform(targets.sphere, 2000);
+            }, false);
+
+            button = document.getElementById('helix');
+            button.addEventListener('click', function (event) {
+                transform(targets.helix, 2000);
+            }, false);
+
+            button = document.getElementById('grid');
+            button.addEventListener('click', function (event) {
+                transform(targets.grid, 2000);
+            }, false);
+
+            transform(targets.table, 2000);
+
+            //
+
+            window.addEventListener('resize', onWindowResize, false);
+
+
+            initBack()
+        }
+
+        function transform(targets, duration) {
+
+            TWEEN.removeAll();
+
+            for (let i = 0; i < objects.length; i++) {
+
+                const object = objects[i];
+                const target = targets[i];
+
+                new TWEEN.Tween(object.position)
+                    .to({
+                        x: target.position.x,
+                        y: target.position.y,
+                        z: target.position.z
+                    }, Math.random() * duration + duration)
+                    .easing(TWEEN.Easing.Exponential.InOut)
+                    .start();
+
+                new TWEEN.Tween(object.rotation)
+                    .to({
+                        x: target.rotation.x,
+                        y: target.rotation.y,
+                        z: target.rotation.z
+                    }, Math.random() * duration + duration)
+                    .easing(TWEEN.Easing.Exponential.InOut)
+                    .start();
+
+            }
+
+            new TWEEN.Tween(this)
+                .to({}, duration * 2)
+                .onUpdate(render)
                 .start();
 
-            new TWEEN.Tween(object.rotation)
-                .to({
-                    x: target.rotation.x,
-                    y: target.rotation.y,
-                    z: target.rotation.z
-                }, Math.random() * duration + duration)
-                .easing(TWEEN.Easing.Exponential.InOut)
-                .start();
+        }
+
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            render();
 
         }
 
-        new TWEEN.Tween(this)
-            .to({}, duration * 2)
-            .onUpdate(render)
-            .start();
+        function animate() {
+
+            // 让场景通过x轴或者y轴旋转  & z
+            // scene.rotation.x += 0.011;
+            scene.rotation.y += 0.008;
+
+            requestAnimationFrame(animate);
+
+            TWEEN.update();
+
+            controls.update();
+
+            // 渲染循环
+            render();
+
+        }
+
+        function render() {
+
+            renderer.render(scene, camera);
+
+        }
+
+        function initBack() {
+            //  初始化背景图
+            bodyEle.style.background = "url(../images/back0" + 1 + ".jpg) center/cover"
+
+            let i = 1;
+            setInterval(() => {
+                i++
+                bodyEle.style.background = "url(../images/back0" + (i) + ".jpg) center/cover";
+                bodyEle.style.transition = "background 1s " + 1 + "s";
+                if (i === 5) {
+                    console.log('触发执行了', i)
+                    i = 1
+                }
+                console.log('图片路径', "../images/back0" + (i) + ".jpg")
+            }, 5000);
+        }
+    }
+
+    function playMusic() {
+        setTimeout(() => {
+            const myaudio = document.getElementById('audio')
+            let audioPlay = myaudio.play();
+            audioPlay.then(() => {
+                console.log('可以自动播放');
+                myaudio.play();
+            }).catch((err) => {
+                myaudio.play();
+                console.log("不允许自动播放", err);
+                //音频元素只在用户交互后调用.play(),
+            });
+        }, 500)
 
     }
 
-    function onWindowResize() {
+    // 倒计时
+    function countdown() {
+        Countdown = function () {
+            _(this).bindAll('update', 'executeAnimation', 'finishAnimation');
+            this.setVars.apply(this, arguments);
+            this.update();
+        };
+        Countdown.prototype = {
+            duration: 1000,
+            setVars: function (time, el, template) {
+                this.max = time;
+                this.time = time;
+                this.el = el;
+                this.template = _(template.innerHTML).template();
+                console.log('当前时间', time)
+                console.log('当前元素', el)
+                console.log('当前模板内容', this.template)
+                this.delta = -1;
+            },
+            update: function () {
+                if (this.nextTime !== 0) {
+                    this.checkTime();
+                    this.setSizes();
+                    this.setupAnimation();
+                    _(this.executeAnimation).delay(20);
+                    _(this.finishAnimation).delay(this.duration * 0.9);
+                    _(this.update).delay(this.duration);
+                }else {
+                    let times = document.getElementById('times')
+                    times.style.display='none'
+                }
 
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
-        render();
-
-    }
-
-    function animate() {
-
-        // 让场景通过x轴或者y轴旋转  & z
-        // scene.rotation.x += 0.011;
-        scene.rotation.y += 0.008;
-
-        requestAnimationFrame(animate);
-
-        TWEEN.update();
-
-        controls.update();
-
-        // 渲染循环
-        render();
-
-    }
-
-    function render() {
-
-        renderer.render(scene, camera);
-
-    }
-
-    function initBack() {
-        //  初始化背景图
-        bodyEle.style.background = "url(../images/back0" + 1 + ".jpg) center/cover"
-
-        let i = 1;
-        setInterval(() => {
-            i++
-            bodyEle.style.background = "url(../images/back0" + (i) + ".jpg) center/cover";
-            bodyEle.style.transition = "background 1s " + 1 + "s";
-            if (i === 5) {
-                console.log('触发执行了', i)
-                i = 1
+            },
+            checkTime: function () {
+                this.time += this.delta;
+                if (this.time === 0)
+                    this.delta = 1;
+                if (this.time === this.max)
+                    this.delta = -1;
+                this.delta === 1 ? this.toggleDirection('up', 'down') : this.toggleDirection('down', 'up'); // this.toggleDirection('down', 'up')
+                this.nextTime = this.time + this.delta;
+            },
+            toggleDirection: function (add, remove) {
+                this.el.classList.add(add);
+                this.el.classList.remove(remove);
+            },
+            setSizes: function () {
+                this.currentSize = this.getSize(this.time);
+                console.log('当前时间', this.currentSize)
+                this.nextSize = this.getSize(this.nextTime);
+                console.log('下一步当前时间', this.currentSize)
+            },
+            getSize: function (time) {
+                return time > 9 ? 'small' : '';
+            },
+            setupAnimation: function () {
+                this.el.innerHTML = this.template(this);
+                this.el.classList.remove('changed');
+            },
+            executeAnimation: function () {
+                this.el.classList.add('changing');
+            },
+            finishAnimation: function () {
+                this.el.classList.add('changed');
+                this.el.classList.remove('changing');
             }
-            console.log('图片路径', "../images/back0" + (i) + ".jpg")
-        }, 5000);
+        };
+        new Countdown(11, document.querySelector('.count'), document.querySelector('#count-template'));
     }
-
 </script>
 
+<script>
+
+</script>
 </body>
-<iframe src="http://mp4-333ttt.qqxzb-img.com/2016/1/06m/25/199251943186.m4a?st=Nm-t1fAJhdrIYjt4xbbnlA&e=1632584893"
-        allow="autoplay" style="display: none"></iframe>
 </html>
