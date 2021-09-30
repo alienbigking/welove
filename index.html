@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html id="html">
+<head>
+    <title>3d相册</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" name="viewport">
+    <script type="text/javascript" src="https://cn.vuejs.org/js/vue.min.js"></script>
+
+    <!-- Google字体，根据需要更换国内的在线字体服务或者用系统默认的字体，非必须加载项 -->
+    <link href="./expand/dialog/index_files/lato.css" rel="stylesheet" type="text/css">
+
+    <!-- DEMO PAGE CSS -->
+    <!-- bootstrap框架 -->
+    <link href="./expand/dialog/index_files/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!-- fontawesome是一个免费的图标字体，根据自己的项目需要加载（现在网页基本上用这用图标字体了，代替图片，加快网页速度，节省流量等一系列优点，不知道的朋友请百度）-->
+    <link href="./expand/dialog/index_files/fontawesome.css" rel="stylesheet" type="text/css">
+    <!-- 下面两个css为demo样式，demo网页背景相关的样式，个人项目中无需引入 -->
+    <link href="./expand/dialog/index_files/default.css" rel="stylesheet" type="text/css">
+    <link href="./expand/dialog/index_files/style.css" rel="stylesheet" type="text/css">
+    <!-- END DEMO PAGE CSS -->
+    <!-- flavr CSS 下面是本插件的核心css文件，必须加载-->
+    <!-- animate.css 是github上很受欢迎的css3动画类库，本插件的所有动画都是靠animate.css实现的，如果你不需要弹出层有动画效果的话也可以不用加载 -->
+    <link href="./expand/dialog/index_files/animate.css" rel="stylesheet" type="text/css">
+    <!-- 插件样式，必须加载 -->
+    <link href="./expand/dialog/index_files/flavr.css" rel="stylesheet" type="text/css">
+    <!-- END flavr CSS -->
+
+
+    <!--倒计时-->
+    <link rel="stylesheet" type="text/css" href="./expand/time/css/countdown.css">
+
+    <link rel="stylesheet" href="./expand/yinhua/css/index.css">
+
+    <link href="css/animate.min.css" rel="stylesheet">
+
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            background-color: #000000;
+            margin: 0;
+            font-family: Helvetica, sans-serif;;
+            overflow: hidden;
+        }
+
+        a {
+            color: #ffffff;
+        }
+
+        #info {
+            position: absolute;
+            width: 100%;
+            color: #ffffff;
+            padding: 5px;
+            font-family: Monospace;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 1;
+        }
+
+        #menu {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .element {
+            width: 100px; /* 120 160 */
+            height: 100px;
+            box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.5);
+            border: 1px solid rgba(127, 255, 255, 0.25);
+            text-align: center;
+            cursor: default;
+        }
+
+        .element:hover {
+            box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.75);
+            border: 1px solid rgba(127, 255, 255, 0.75);
+        }
+
+        .element img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .element .number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 12px;
+            color: rgba(127, 255, 255, 0.75);
+        }
+
+        .element .symbol {
+            position: absolute;
+            top: 40px;
+            left: 0px;
+            right: 0px;
+            font-size: 60px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.75);
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.95);
+        }
+
+        .element .details {
+            position: absolute;
+            bottom: 15px;
+            left: 0px;
+            right: 0px;
+            font-size: 12px;
+            color: rgba(127, 255, 255, 0.75);
+        }
+
+        button {
+            color: rgba(127, 255, 255, 0.75);
+            background: transparent;
+
+            border: 0px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: rgba(0, 255, 255, 0.5);
+        }
+
+        button:active {
+            color: #000000;
+            background-color: rgba(0, 255, 255, 0.75);
+        }
+
+        .show_info {
+            position: fixed;
+            background-color: rgba(0, 0, 0, .6);
+            padding: 10px;
+            width: 300px;
+            margin: 0 auto;
+            left: 0;
+            right: 0;
+            border-radius: 5px;
+            box-shadow: 0 0 10px 0 #fff;
+            top: 30%;
+        }
+
+        .show_info img {
+            display: block;
+            margin: auto;
+            border-radius: 5px;
+            box-shadow: 0 0 10px 0 #888;
+        }
+
+        .show_info .intro {
+            color: #fff;
+            text-indent: 20px;
+            margin-top: 10px;
+            height: 65px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .show_info .info_my {
+            text-align: center;
+        }
+
+        .show_info .info_my > * {
+            display: inline-block !important;
+            vertical-align: middle;
+        }
+
+        .show_info .info_my .info_mem {
+            color: #fff;
+            max-width: 120px;
+        }
+
+        .show_info .info_my .info_mem > div {
+            text-align: left;
+        }
+
+        .show_info .info_my .info_mem > div.nickname {
+            max-width: 120px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    </style>
+
+    <style>
+        .flavr-outer .flavr-content {
+            color: #FF69B4FF !important;
+        }
+
+        .flavr-outer .flavr-toolbar a {
+            color: #FF69B4FF !important;
+        }
+
+        .flavr-container .flavr-overlay {
+            background: #FF69B4FF;
+        }
+    </style>
+    <style>
+        #times {
+            /*position: relative;*/
+            position: absolute;
+            top: 150px;
+            right: 200px;
+        }
+
+        .jq22-container .nextColor {
+            background: #FFC0CBFF;
+            color: hotpink;
+            text-shadow: 0 1px 0 #FF69B4FF, 0 2px 0 #FF69B4FF, 0 3px 0 #FF69B4FF, 0 4px 0 #FF69B4FF, 0 5px 0 #FF69B4FF, 0 0 10px rgb(0 0 0 / 80%);
+        }
+
+        .jq22-container .topColor {
+            background: #FFC0CBFF;
+            color: hotpink;
+            text-shadow: 0 1px 0 #FF69B4FF, 0 2px 0 #FF69B4FF, 0 3px 0 #FF69B4FF, 0 4px 0 #FF69B4FF, 0 5px 0 #FF69B4FF, 0 0 10px rgb(0 0 0 / 80%);
+
+        }
+
+        .jq22-container .count .top {
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            box-shadow: inset 0 2px #FFC0CBFF, inset 0 2px #FFC0CBFF;
+            height: 50%;
+            overflow: hidden;
+        }
+
+        .jq22-container .count .top:after {
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .jq22-container .count span:before {
+            border-bottom: 2px solid #FFC0CBFF;
+        }
+
+        .jq22-container .count.down .bottom {
+            border-radius: 2px;
+        }
+
+        .jq22-container .count .bottom:after {
+            border-radius: 2px;
+        }
+    </style>
+    <style type="text/css">
+        .aixing {
+            display: none;
+            /*z-index: 9999 !important;*/
+        }
+
+        .ai_xing {
+            z-index: 9999 !important;
+            position: absolute;
+            left: 50%;
+            top: 42%;
+            transform: translateX(-50%) translateY(-50%);
+            font-family: "Montserrat";
+            text-align: center;
+            width: 100%;
+        }
+
+        .ai_xing h1 {
+            z-index: 99;
+            position: relative;
+            color: #fff;
+            font-weight: 100;
+            font-size: 70px;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+            text-shadow: 0 0 10px #ff006c, 0 0 20px #ff006c, 0 0 30px #ff006c,
+            0 0 40px #ff417d, 0 0 70px #ff417d, 0 0 80px #ff417d,
+            0 0 100px #ff417d, 0 0 150px #ff417d;
+        }
+
+        .ai_xing h1 span {
+            z-index: 99;
+            font-weight: 600;
+            padding: 0;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        .ai_xing h3 {
+            z-index: 99;
+            font-weight: 200;
+            font-size: 26px;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+
+        /* 爱心css */
+        .ai_xing_canvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .img {
+            position: absolute;
+            left: 50%;
+            top: 60%;
+            transform: translate(-50%, -50%);
+            width: 440px;
+            height: 430px;
+        }
+
+        #pinkboard {
+            position: relative;
+            top: 0%;
+            left: 0%;
+            height: 429px;
+        }
+
+        .STARDUST1 {
+            position: relative !important;
+            top: -60px;
+        }
+
+        .STARDUST2 {
+            position: relative !important;
+            top: -40px;
+        }
+
+        .STARDUST3 {
+            position: relative !important;
+            top: -20px;
+        }
+
+        /* 星空css */
+        .xingkong {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(
+                    1600px at 70% 120%,
+                    rgba(33, 39, 80, 1) 10%,
+                    #020409 100%
+            ) !important;
+        }
+
+        .content {
+            width: inherit;
+            height: inherit;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(
+                    1600px at 70% 120%,
+                    rgba(33, 39, 80, 1) 10%,
+                    #020409 100%
+            ) !important;
+        }
+
+        #universe {
+            width: 100%;
+            height: 100%;
+        }
+
+        #footerContent {
+            font-family: sans-serif;
+            font-size: 110%;
+            color: rgba(200, 220, 255, 0.3);
+            width: 100%;
+            position: fixed;
+            bottom: 0px;
+            padding: 20px;
+            text-align: center;
+            z-index: 20;
+        }
+
+        #scene {
+            height: 100%;
+            position: absolute;
+            left: 50%;
+            margin-left: -800px;
+        }
+
+        a {
+            text-decoration: none;
+            color: rgba(200, 220, 255, 1);
+            opacity: 0.4;
+            transition: opacity 0.4s ease;
+        }
+
+        a:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body id="body">
+<script src="js/jquery.min.js"></script>
+<script src="js/three.js"></script>
+<script src="js/tween.min.js"></script>
+<script src="js/TrackballControls.js"></script>
+<script src="js/CSS3DRenderer.js"></script>
+
+<div id="rotate_container">
+    <div id="container"></div>
+    <div id="info"></div>
+    <div id="menu">
+        <button id="table"></button>
+        <button id="sphere"></button>
+        <button id="helix"></button>
+        <button id="grid"></button>
+        <div class="music">
+            <audio style="display: none" autoplay="true" controls="controls" id="audio" loop=-1>
+                <source src="https://link.jscdn.cn/1drv/aHR0cHM6Ly8xZHJ2Lm1zL3UvcyFBdWhHeVZhYm1qb3Rud1ZpQThEZlppVTcwcGhTP2U9T3lkYlpx.flac"
+                        type="audio/mpeg"/>
+            </audio>
+        </div>
+
+    </div>
+</div>
+
+
+<!--倒计时-->
+<div id="times" class="jq22-container">
+    <div class="jq22-content bgcolor-8">
+        <div class="count"></div>
+        <script id="count-template" type="text/template">
+            <span class="current top <%= currentSize %> topColor"><%= time %></span>
+            <span class="next top <%= nextSize %> nextColor"><%= nextTime %></span>
+            <span class="current bottom <%= currentSize %> topColor"><%= time %></span>
+            <span class="next bottom <%= nextSize %> nextColor"><%= nextTime %></span>
+        </script>
+    </div>
+
+</div>
+
+<!--start樱花-->
+<div id="yinghuaContainer">
+    <div class="cherry">
+        <img id="yinghua" src="../images/yinhua/yinhua1.png" alt="">
+    </div>
+    <div id="app" class="box">
+        <div class="box_contain" v-show="showBox">
+            <div class="des"> {{text1}}</div>
+            <div class="des"> {{text2}}</div>
+            <div class="des"> {{text3}}</div>
+            <div class="des"> {{text4}}</div>
+            <transition name="fade">
+                <div v-show="showTimes" class="time"> {{timeLeft}}</div>
+            </transition>
+            <div class="des"> {{text5}}{{text6}}</div>
+        </div>
+        <img height="200px" class="gifImg" v-show="!showBox" src="./img/loading.gif"
+             alt="">
+        <!--弹窗-->
+        <!--			 <transition name="fade">-->
+        <!--			 	<div v-show="show_popups" @click="close_popup">-->
+        <!--			 		&lt;!&ndash;要展示的内容层&ndash;&gt;-->
+        <!--			 		<div class="popup_error">-->
+        <!--			 			感情需要真心<br>-->
+        <!--			 			-->
+        <!--			 		</div>-->
+        <!--			 		&lt;!&ndash;半透明背景层&ndash;&gt;-->
+        <!--			 		<div class="popup_over"></div>-->
+        <!--			 	</div>-->
+        <!--			 </transition>-->
+    </div>
+</div>
+
+<!--end樱花-->
+
+
+<!--start心型-->
+<div id="aixing" class="aixing">
+    <div class="xingkong">
+        <div class="content">
+            <canvas id="universe"></canvas>
+        </div>
+    </div>
+    <div class="ai_xing">
+        <!-- 星团文字html -->
+        <h3 class="STARDUST1">2021</h3>
+        <h1 class="STARDUST2">❤❤丹妮❤❤</h1>
+        <h3 class="STARDUST3">L O V E <strong>❤</strong> Y O U</h3>
+        <!-- 爱心html -->
+        <img class="img" src="../images/6_love.png" alt=""/>
+        <canvas id="pinkboard" class="ai_xing_canvas"></canvas>
+    </div>
+</div>
+<!--end心型-->
+
+
+<!-- start--dialog -->
+<!-- jQuery和bootstrap必须加载，这个是弹窗的基本提供 -->
+<!--<script type="text/javascript" src="./expand/dialog/index_files/jquery.min.js"></script>-->
+<script src="./expand/dialog/index_files/bootstrap.min.js" type="text/javascript"></script>
+<!-- 下面是插件核心代码，必须加载 -->
+<script src="./expand/dialog/index_files/flavr.min.js" type="text/javascript"></script>
+<!-- END flavr SCRIPT -->
+<!-- end--dialog -->
+
+<!--倒计时-->
+<script src='./expand/time/js/underscore-1.5.2-min.js'></script>
+
+<!--樱花-->
+<script type="text/javascript" src="./expand/yinhua/js/yinghua.js"></script>
+<script type="text/javascript" src="./expand/yinhua/js/device.js"></script>
+<script type="text/javascript" src="./expand/yinhua/js/control.js"></script>
+<script type="text/javascript" src="./expand/yinhua/js/music.js"></script>
+<script type="text/javascript" src="./expand/yinhua/js/protect.js"></script>
+
+<script>
+    window.onload = function () {
+        new $.flavr({
+            content: '丹妮！准备好了吗',
+            dialog: 'confirm',
+            buttons: {
+                confirm: {
+                    text: '我准备好了',
+                    addClass: 'confirm-btn',
+                    action: function () {
+                        start()
+                        playMusic()
+                        countdown()
+                        fullScreen()
+
+                        // 爱心
+                        // xingtuan()
+                        // aixing()
+                        // xingkong()
+                    }
+                }
+            }
+        });
+    }
+
+    //全屏
+    function fullScreen() {
+        //var element= document.documentElement; //若要全屏页面中div，var element= document.getElementById("divID");
+        const element = document.getElementById("html");
+        //IE 10及以下ActiveXObject
+        if (window.ActiveXObject) {
+            const WsShell = new ActiveXObject('WScript.Shell');
+            WsShell.SendKeys('{F11}');
+            //写全屏后的执行函数
+        }
+        //HTML W3C 提议
+        else if (element.requestFullScreen) {
+            element.requestFullScreen();
+            //写全屏后的执行函数
+        }
+        //IE11
+        else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+            //写全屏后的执行函数
+        }
+        // Webkit (works in Safari5.1 and Chrome 15)
+        else if (element.webkitRequestFullScreen) {
+            element.webkitRequestFullScreen();
+            //写全屏后的执行函数
+        }
+        // Firefox (works in nightly)
+        else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+            //写全屏后的执行函数
+        }
+
+    }
+
+    //退出全屏
+    function fullExit() {
+        //var element= document.documentElement;//若要全屏页面中div，var element= document.getElementById("divID");
+        const element = document.getElementById("html");
+        //IE ActiveXObject
+        if (window.ActiveXObject) {
+            const WsShell = new ActiveXObject('WScript.Shell');
+            WsShell.SendKeys('{F11}');
+            //写退出全屏后的执行函数
+        }
+        //HTML5 W3C 提议
+        else if (element.requestFullScreen) {
+            document.exitFullscreen();
+            //写退出全屏后的执行函数
+        }
+        //IE 11
+        else if (element.msRequestFullscreen) {
+            document.msExitFullscreen();
+            //写退出全屏后的执行函数
+        }
+        // Webkit (works in Safari5.1 and Chrome 15)
+        else if (element.webkitRequestFullScreen) {
+            document.webkitCancelFullScreen();
+            //写退出全屏后的执行函数
+        }
+        // Firefox (works in nightly)
+        else if (element.mozRequestFullScreen) {
+            document.mozCancelFullScreen();
+            //写退出全屏后的执行函数
+        }
+    }
+
+
+    function start() {
+        console.log('调用触发了吗')
+        const bodyEle = document.getElementById('body')
+
+
+        const personArray = new Array;
+        let CurPersonNum = 0;
+        let i;
+        // animate
+        const _in = ['bounceIn', 'bounceInDown', 'bounceInLeft', 'bounceInRight', 'bounceInUp', 'fadeIn', 'fadeInDown', 'fadeInDownBig', 'fadeInLeft', 'fadeInLeftBig', 'fadeInRight', 'fadeInRightBig', 'fadeInUp', 'fadeInUpBig', 'rotateIn', 'rotateInDownLeft', 'rotateInDownRight', 'rotateInUpLeft', 'rotateInUpRight', 'slideInDown', 'slideInLeft', 'slideInRight'];
+        const _out = ['bounceOut', 'bounceOutDown', 'bounceOutLeft', 'bounceOutRight', 'bounceOutUp', 'fadeOut', 'fadeOutDown', 'fadeOutDownBig', 'fadeOutLeft', 'fadeOutLeftBig', 'fadeOutRight', 'fadeOutRightBig', 'fadeOutUp', 'fadeOutUpBig', 'rotateOut', 'rotateOutDownLeft', 'rotateOutDownRight', 'rotateOutUpLeft', 'rotateOutUpRight', 'slideOutDown', 'slideOutLeft', 'slideOutRight'];
+
+        let count = 1;
+        // 模拟推送数据
+        const s = setInterval(function () {
+            // get animate
+            const rand_in = parseInt(Math.random() * _in.length, 10);
+            const rand_out = parseInt(Math.random() * _out.length, 10);
+
+            if (CurPersonNum >= personArray.length) {
+                CurPersonNum = 0;
+                count = 1;
+            }
+            $('.show_info').show();
+            $('.show_info').addClass(_in[rand_in]);
+            setTimeout(function () {
+                $('.show_info').removeClass(_in[rand_in]);
+                // 更改展示的图片
+                const img = document.getElementsByClassName('element')[CurPersonNum].getElementsByTagName('img')[0];
+                if (CurPersonNum == count * 20) {
+                    ++count;
+                }
+                img.setAttribute('src', '../images/' + count + '.jpg');
+                ++CurPersonNum;
+                setTimeout(function () {
+                    $('.show_info').addClass(_out[rand_out]);
+                    setTimeout(function () {
+                        $('.show_info').removeClass(_out[rand_out]);
+                        $('.show_info').hide();
+                    }, 1000);
+                }, 1500);
+            }, 1000);
+        }, 100);
+
+        // 生成虚拟数据
+        for (i = 0; i < 199; i++) {
+            personArray.push({
+                image: "../images/1.jpg"
+            });
+        }
+
+        const table = new Array;
+        for (i = 0; i < personArray.length; i++) {
+            table[i] = new Object();
+            if (i < personArray.length) {
+                table[i] = personArray[i];
+                table[i].src = personArray[i].thumb_image;
+            }
+            table[i].p_x = i % 20 + 1;
+            table[i].p_y = Math.floor(i / 20) + 1;
+        }
+
+        let camera, scene, renderer;
+        let controls;
+
+        const objects = [];
+        const targets = {table: [], sphere: [], helix: [], grid: []};
+
+        init();
+        animate();
+
+        function init() {
+
+            let theta;
+            let object;
+            let i;
+            camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.z = 3000;
+
+            scene = new THREE.Scene();
+
+            // table
+
+            for (i = 0; i < table.length; i++) {
+
+                const element = document.createElement('div');
+                element.className = 'element';
+                element.style.backgroundColor = 'rgba(0,127,127,' + (Math.random() * 0.5 + 0.25) + ')';
+
+                const img = document.createElement('img');
+                img.src = table[i].image;
+                element.appendChild(img);
+
+
+                object = new THREE.CSS3DObject(element);
+                object.position.x = Math.random() * 4000 - 2000;
+                object.position.y = Math.random() * 4000 - 2000;
+                object.position.z = Math.random() * 4000 - 2000;
+                scene.add(object);
+
+                objects.push(object);
+
+                // 表格需要坐标进行排序的
+                object = new THREE.Object3D();
+                // object.position.x = ( table[ i + 3 ] * 140 ) - 1330;
+                // object.position.y = - ( table[ i + 4 ] * 180 ) + 990;
+                object.position.x = (table[i].p_x * 140) - 1330;
+                object.position.y = -(table[i].p_y * 180) + 990;
+
+                targets.table.push(object);
+
+            }
+
+            // sphere
+
+            let vector = new THREE.Vector3();
+            const spherical = new THREE.Spherical();
+
+            i = 0;
+            let l = objects.length;
+            for (; i < l; i++) {
+
+                const phi = Math.acos(-1 + (2 * i) / l);
+                theta = Math.sqrt(l * Math.PI) * phi;
+
+                object = new THREE.Object3D();
+
+                spherical.set(800, phi, theta);
+
+                object.position.setFromSpherical(spherical);
+
+                vector.copy(object.position).multiplyScalar(2);
+
+                object.lookAt(vector);
+
+                targets.sphere.push(object);
+
+            }
+
+            // helix
+
+            vector = new THREE.Vector3();
+            const cylindrical = new THREE.Cylindrical();
+
+            i = 0;
+            l = objects.length;
+            for (; i < l; i++) {
+
+                theta = i * 0.175 + Math.PI;
+                const y = -(i * 5) + 450;
+
+                object = new THREE.Object3D();
+
+                // 参数一 圈的大小 参数二 左右间距 参数三 上下间距
+                cylindrical.set(900, theta, y);
+
+                object.position.setFromCylindrical(cylindrical);
+
+                vector.x = object.position.x * 2;
+                vector.y = object.position.y;
+                vector.z = object.position.z * 2;
+
+                object.lookAt(vector);
+
+                targets.helix.push(object);
+
+            }
+
+            // grid
+            for (i = 0; i < objects.length; i++) {
+
+                object = new THREE.Object3D();
+
+                object.position.x = ((i % 5) * 400) - 800; // 400 图片的左右间距  800 x轴中心店
+                object.position.y = (-(Math.floor(i / 5) % 5) * 300) + 500;  // 500 y轴中心店
+                object.position.z = (Math.floor(i / 25)) * 200 - 800;// 300调整 片间距 800z轴中心店
+
+                targets.grid.push(object);
+
+            }
+
+            //渲染
+            renderer = new THREE.CSS3DRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.domElement.style.position = 'absolute';
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            // 鼠标控制
+            controls = new THREE.TrackballControls(camera, renderer.domElement);
+            controls.rotateSpeed = 0.5;
+            controls.minDistance = 500;
+            controls.maxDistance = 6000;
+            controls.addEventListener('change', render);
+
+            // 自动更换
+            let ini = 0;
+            setInterval(function () {
+                ini = ini >= 3 ? 0 : ini;
+                ++ini;
+                switch (ini) {
+                    case 1:
+                        transform(targets.sphere, 1000);
+                        break;
+                    case 2:
+                        transform(targets.helix, 1000);
+                        break;
+                    case 3:
+                        transform(targets.grid, 1000);
+                        break;
+                }
+            }, 8000);
+
+            let button = document.getElementById('table');
+            button.addEventListener('click', function (event) {
+                transform(targets.table, 1000);
+            }, false);
+
+            button = document.getElementById('sphere');
+            button.addEventListener('click', function (event) {
+                transform(targets.sphere, 2000);
+            }, false);
+
+            button = document.getElementById('helix');
+            button.addEventListener('click', function (event) {
+                transform(targets.helix, 2000);
+            }, false);
+
+            button = document.getElementById('grid');
+            button.addEventListener('click', function (event) {
+                transform(targets.grid, 2000);
+            }, false);
+
+            transform(targets.table, 2000);
+
+            //
+
+            window.addEventListener('resize', onWindowResize, false);
+
+
+            initBack()
+        }
+
+        function transform(targets, duration) {
+
+            TWEEN.removeAll();
+
+            for (let i = 0; i < objects.length; i++) {
+
+                const object = objects[i];
+                const target = targets[i];
+
+                new TWEEN.Tween(object.position)
+                    .to({
+                        x: target.position.x,
+                        y: target.position.y,
+                        z: target.position.z
+                    }, Math.random() * duration + duration)
+                    .easing(TWEEN.Easing.Exponential.InOut)
+                    .start();
+
+                new TWEEN.Tween(object.rotation)
+                    .to({
+                        x: target.rotation.x,
+                        y: target.rotation.y,
+                        z: target.rotation.z
+                    }, Math.random() * duration + duration)
+                    .easing(TWEEN.Easing.Exponential.InOut)
+                    .start();
+
+            }
+
+            new TWEEN.Tween(this)
+                .to({}, duration * 2)
+                .onUpdate(render)
+                .start();
+
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            render();
+
+        }
+
+        function animate() {
+
+            // 让场景通过x轴或者y轴旋转  & z
+            // scene.rotation.x += 0.011;
+            scene.rotation.y += 0.008;
+
+            requestAnimationFrame(animate);
+
+            TWEEN.update();
+
+            controls.update();
+
+            // 渲染循环
+            render();
+
+        }
+
+        function render() {
+
+            renderer.render(scene, camera);
+
+        }
+
+        function initBack() {
+            //  初始化背景图
+            bodyEle.style.background = "url(../images/back0" + 1 + ".jpg) center/cover"
+
+            let i = 1;
+            setInterval(() => {
+                i++
+                bodyEle.style.background = "url(../images/back0" + (i) + ".jpg) center/cover";
+                bodyEle.style.transition = "background 1s " + 1 + "s";
+                if (i === 5) {
+                    // console.log('触发执行了', i)
+                    i = 1
+                }
+                // console.log('图片路径', "../images/back0" + (i) + ".jpg")
+            }, 5000);
+        }
+    }
+
+    function playMusic() {
+        setTimeout(() => {
+            const myaudio = document.getElementById('audio')
+            let audioPlay = myaudio.play();
+            audioPlay.then(() => {
+                console.log('可以自动播放');
+                myaudio.play();
+            }).catch((err) => {
+                myaudio.play();
+                console.log("不允许自动播放", err);
+                //音频元素只在用户交互后调用.play(),
+            });
+        }, 500)
+
+    }
+
+    // 倒计时
+    function countdown() {
+        Countdown = function () {
+            _(this).bindAll('update', 'executeAnimation', 'finishAnimation');
+            this.setVars.apply(this, arguments);
+            this.update();
+        };
+        Countdown.prototype = {
+            duration: 1000,
+            setVars: function (time, el, template) {
+                this.max = time;
+                this.time = time;
+                this.el = el;
+                this.template = _(template.innerHTML).template();
+                console.log('当前时间', time)
+                console.log('当前元素', el)
+                console.log('当前模板内容', this.template)
+                this.delta = -1;
+            },
+            update: function () {
+                if (this.nextTime !== 0) {
+                    this.checkTime();
+                    this.setSizes();
+                    this.setupAnimation();
+                    _(this.executeAnimation).delay(20);
+                    _(this.finishAnimation).delay(this.duration * 0.9);
+                    _(this.update).delay(this.duration);
+                } else {
+                    let times = document.getElementById('times')
+                    times.style.display = 'none'
+                    // 倒计时结束开启打字机表白 关闭3d照片
+                    let rotateContainer = document.getElementById('rotate_container')
+                    rotateContainer.style.display = 'none'
+
+                    vm.start()
+                    // console.log('拿到vm实例', vm)
+                    // 樱花
+                    yinghua()
+                }
+
+            },
+            checkTime: function () {
+                this.time += this.delta;
+                if (this.time === 0)
+                    this.delta = 1;
+                if (this.time === this.max)
+                    this.delta = -1;
+                this.delta === 1 ? this.toggleDirection('up', 'down') : this.toggleDirection('down', 'up'); // this.toggleDirection('down', 'up')
+                this.nextTime = this.time + this.delta;
+            },
+            toggleDirection: function (add, remove) {
+                this.el.classList.add(add);
+                this.el.classList.remove(remove);
+            },
+            setSizes: function () {
+                this.currentSize = this.getSize(this.time);
+                console.log('当前时间', this.currentSize)
+                this.nextSize = this.getSize(this.nextTime);
+                console.log('下一步当前时间', this.currentSize)
+            },
+            getSize: function (time) {
+                return time > 9 ? 'small' : '';
+            },
+            setupAnimation: function () {
+                this.el.innerHTML = this.template(this);
+                this.el.classList.remove('changed');
+            },
+            executeAnimation: function () {
+                this.el.classList.add('changing');
+            },
+            finishAnimation: function () {
+                this.el.classList.add('changed');
+                this.el.classList.remove('changing');
+            }
+        };
+        new Countdown(31, document.querySelector('.count'), document.querySelector('#count-template'));
+    }
+
+    // 樱花
+    function yinghua() {
+        $(function () {
+            $('.cherry').Cherry_Blossoms({
+                is_Cherry: true, //是否生成樱花
+                image_min: 10, //花瓣最小宽度和高度
+                image_max: 50, //花瓣最大宽度和高度
+                time_min: 10000, //花瓣最快下坠时间
+                time_max: 20000, //花瓣最慢下坠时间
+                interval: 400 //花瓣生成时间间隔
+            })
+        })
+    }
+</script>
+
+<!----------------------------------------------------------------------------start-->
+<!-- 星团js -->
+<script>
+
+    function xingtuan() {
+        let particles = [];
+        let microparticles = [];
+
+        const c1 = createCanvas({
+            width: $(window).width(),
+            height: $(window).height(),
+        });
+
+        const canvas = c1.canvas;
+        const canvasContext = c1.context;
+
+        $("body").append(c1.canvas);
+
+        class Particle1 {
+            constructor(canvas) {
+                this.random = Math.random();
+                this.random1 = Math.random();
+                this.random2 = Math.random();
+                this.progress = 0;
+                this.canvas = canvas;
+                this.life = 1000 + Math.random() * 3000;
+
+                this.x =
+                    $(window).width() / 2 + (Math.random() * 20 - Math.random() * 20);
+                this.y = $(window).height();
+                this.s = 2 + Math.random();
+                this.w = $(window).width();
+                this.h = $(window).height();
+                this.direction = this.random > 0.5 ? -1 : 1;
+                this.radius = 1 + 3 * this.random;
+                this.color = "#ff417d";
+
+                this.ID = setInterval(
+                    function () {
+                        microparticles.push(
+                            new microParticle(c1.context, {
+                                x: this.x,
+                                y: this.y,
+                            })
+                        );
+                    }.bind(this),
+                    this.random * 20
+                );
+
+                setTimeout(
+                    function () {
+                        clearInterval(this.ID);
+                    }.bind(this),
+                    this.life
+                );
+            }
+
+            render() {
+                this.canvas.beginPath();
+                this.canvas.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+                // this.canvas.lineWidth = 2;
+                this.canvas.shadowOffsetX = 0;
+                this.canvas.shadowOffsetY = 0;
+                // this.canvas.shadowBlur = 6;
+                this.canvas.shadowColor = "#000000";
+                this.canvas.fillStyle = this.color;
+                this.canvas.fill();
+                this.canvas.closePath();
+            }
+
+            move() {
+                this.x -=
+                    this.direction *
+                    Math.sin(this.progress / (this.random1 * 430)) *
+                    this.s;
+                this.y -= Math.cos(this.progress / this.h) * this.s;
+
+                if (this.x < 0 || this.x > this.w - this.radius) {
+                    clearInterval(this.ID);
+                    return false;
+                }
+
+                if (this.y < 0) {
+                    clearInterval(this.ID);
+                    return false;
+                }
+                this.render();
+                this.progress++;
+                return true;
+            }
+        }
+
+        class microParticle {
+            constructor(canvas, options) {
+                this.random = Math.random();
+                this.random1 = Math.random();
+                this.random2 = Math.random();
+                this.progress = 0;
+                this.canvas = canvas;
+
+                this.x = options.x;
+                this.y = options.y;
+                this.s = 2 + Math.random() * 3;
+                this.w = $(window).width();
+                this.h = $(window).height();
+                this.radius = 1 + this.random * 0.5;
+                this.color = "#4EFCFE"; //this.random > .5 ? "#a9722c" : "#FFFED7"
+            }
+
+            render() {
+                this.canvas.beginPath();
+                this.canvas.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+                this.canvas.lineWidth = 2;
+                this.canvas.fillStyle = this.color;
+                this.canvas.fill();
+                this.canvas.closePath();
+            }
+
+            move() {
+                this.x -=
+                    Math.sin(this.progress / (100 / (this.random1 - this.random2 * 10))) *
+                    this.s;
+                this.y += Math.cos(this.progress / this.h) * this.s;
+
+                if (this.x < 0 || this.x > this.w - this.radius) {
+                    return false;
+                }
+
+                if (this.y > this.h) {
+                    return false;
+                }
+                this.render();
+                this.progress++;
+                return true;
+            }
+        }
+
+        let random_life = 1000;
+
+        setInterval(
+            function () {
+                particles.push(new Particle1(canvasContext));
+                random_life = 2000 * Math.random();
+            }.bind(this),
+            random_life
+        );
+
+        function clear() {
+            let grd = canvasContext.createRadialGradient(
+                canvas.width / 2,
+                canvas.height / 2,
+                0,
+                canvas.width / 2,
+                canvas.height / 2,
+                canvas.width
+            );
+            grd.addColorStop(0, "rgba(20,20,20,1)");
+            grd.addColorStop(1, "rgba(0,0,0,0)");
+            // Fill with gradient
+            canvasContext.globalAlpha = 0.16;
+            canvasContext.fillStyle = grd;
+            canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function blur(ctx, canvas, amt) {
+            // ctx.filter = `blur(${amt}px)`
+            // ctx.drawImage(canvas, 0, 0)
+            // ctx.filter = 'none'
+        }
+
+        function update() {
+            clear();
+            particles = particles.filter(function (p) {
+                return p.move();
+            });
+            microparticles = microparticles.filter(function (mp) {
+                return mp.move();
+            });
+            requestAnimationFrame(update.bind(this));
+        }
+
+        function createCanvas(properties) {
+            let canvas = document.createElement("canvas");
+            canvas.width = properties.width;
+            //   canvas.style.zIndex = 999;
+            canvas.height = properties.height;
+            let context = canvas.getContext("2d");
+            return {
+                canvas: canvas,
+                context: context,
+            };
+        }
+
+        update();
+    }
+
+</script>
+<!--爱心js  -->
+<script>
+    function aixing() {
+        const settings = {
+            particles: {
+                length: 500, // maximum amount of particles
+                duration: 2, // particle duration in sec
+                velocity: 100, // particle velocity in pixels/sec
+                effect: -0.75, // play with this for a nice effect
+                size: 30, // particle size in pixels
+            },
+        };
+
+        /*
+         * RequestAnimationFrame polyfill by Erik M?ller
+         */
+        (function () {
+            let b = 0;
+            const c = ["ms", "moz", "webkit", "o"];
+            for (let a = 0; a < c.length && !window.requestAnimationFrame; ++a) {
+                window.requestAnimationFrame = window[c[a] + "RequestAnimationFrame"];
+                window.cancelAnimationFrame =
+                    window[c[a] + "CancelAnimationFrame"] ||
+                    window[c[a] + "CancelRequestAnimationFrame"];
+            }
+            if (!window.requestAnimationFrame) {
+                window.requestAnimationFrame = function (h, e) {
+                    const d = new Date().getTime();
+                    const f = Math.max(0, 16 - (d - b));
+                    const g = window.setTimeout(function () {
+                        h(d + f);
+                    }, f);
+                    b = d + f;
+                    return g;
+                };
+            }
+            if (!window.cancelAnimationFrame) {
+                window.cancelAnimationFrame = function (d) {
+                    clearTimeout(d);
+                };
+            }
+        })();
+
+        /*
+         * Point class
+         */
+        const Point = (function () {
+            function Point(x, y) {
+                this.x = typeof x !== "undefined" ? x : 0;
+                this.y = typeof y !== "undefined" ? y : 0;
+            }
+
+            Point.prototype.clone = function () {
+                return new Point(this.x, this.y);
+            };
+            Point.prototype.length = function (length) {
+                if (typeof length == "undefined")
+                    return Math.sqrt(this.x * this.x + this.y * this.y);
+                this.normalize();
+                this.x *= length;
+                this.y *= length;
+                return this;
+            };
+            Point.prototype.normalize = function () {
+                const length = this.length();
+                this.x /= length;
+                this.y /= length;
+                return this;
+            };
+            return Point;
+        })();
+
+        /*
+         * Particle class
+         */
+        const Particle = (function () {
+            function Particle() {
+                this.position = new Point();
+                this.velocity = new Point();
+                this.acceleration = new Point();
+                this.age = 0;
+            }
+
+            Particle.prototype.initialize = function (x, y, dx, dy) {
+                this.position.x = x;
+                this.position.y = y;
+                this.velocity.x = dx;
+                this.velocity.y = dy;
+                this.acceleration.x = dx * settings.particles.effect;
+                this.acceleration.y = dy * settings.particles.effect;
+                this.age = 0;
+            };
+            Particle.prototype.update = function (deltaTime) {
+                this.position.x += this.velocity.x * deltaTime;
+                this.position.y += this.velocity.y * deltaTime;
+                this.velocity.x += this.acceleration.x * deltaTime;
+                this.velocity.y += this.acceleration.y * deltaTime;
+                this.age += deltaTime;
+            };
+            Particle.prototype.draw = function (context, image) {
+                function ease(t) {
+                    return --t * t * t + 1;
+                }
+
+                const size = image.width * ease(this.age / settings.particles.duration);
+                context.globalAlpha = 1 - this.age / settings.particles.duration;
+                context.drawImage(
+                    image,
+                    this.position.x - size / 2,
+                    this.position.y - size / 2,
+                    size,
+                    size
+                );
+            };
+            return Particle;
+        })();
+
+        /*
+         * ParticlePool class
+         */
+        const ParticlePool = (function () {
+            let particles,
+                firstActive = 0,
+                firstFree = 0,
+                duration = settings.particles.duration;
+
+            function ParticlePool(length) {
+                // create and populate particle pool
+                particles = new Array(length);
+                for (let i = 0; i < particles.length; i++)
+                    particles[i] = new Particle();
+            }
+
+            ParticlePool.prototype.add = function (x, y, dx, dy) {
+                particles[firstFree].initialize(x, y, dx, dy);
+
+                // handle circular queue
+                firstFree++;
+                if (firstFree == particles.length) firstFree = 0;
+                if (firstActive == firstFree) firstActive++;
+                if (firstActive == particles.length) firstActive = 0;
+            };
+            ParticlePool.prototype.update = function (deltaTime) {
+                let i;
+
+                // update active particles
+                if (firstActive < firstFree) {
+                    for (i = firstActive; i < firstFree; i++)
+                        particles[i].update(deltaTime);
+                }
+                if (firstFree < firstActive) {
+                    for (i = firstActive; i < particles.length; i++)
+                        particles[i].update(deltaTime);
+                    for (i = 0; i < firstFree; i++) particles[i].update(deltaTime);
+                }
+
+                // remove inactive particles
+                while (
+                    particles[firstActive].age >= duration &&
+                    firstActive != firstFree
+                    ) {
+                    firstActive++;
+                    if (firstActive == particles.length) firstActive = 0;
+                }
+            };
+            ParticlePool.prototype.draw = function (context, image) {
+                // draw active particles
+                if (firstActive < firstFree) {
+                    for (i = firstActive; i < firstFree; i++)
+                        particles[i].draw(context, image);
+                }
+                if (firstFree < firstActive) {
+                    for (i = firstActive; i < particles.length; i++)
+                        particles[i].draw(context, image);
+                    for (i = 0; i < firstFree; i++) particles[i].draw(context, image);
+                }
+            };
+            return ParticlePool;
+        })();
+
+        /*
+         * Putting it all together
+         */
+        (function (canvas) {
+            let context = canvas.getContext("2d"),
+                particles = new ParticlePool(settings.particles.length),
+                particleRate = settings.particles.length / settings.particles.duration, // particles/sec
+                time;
+
+            // get point on heart with -PI <= t <= PI
+            function pointOnHeart(t) {
+                return new Point(
+                    160 * Math.pow(Math.sin(t), 3),
+                    130 * Math.cos(t) -
+                    50 * Math.cos(2 * t) -
+                    20 * Math.cos(3 * t) -
+                    10 * Math.cos(4 * t) +
+                    25
+                );
+            }
+
+            // creating the particle image using a dummy canvas
+            const image = (function () {
+                const canvas = document.createElement("canvas"),
+                    context = canvas.getContext("2d");
+                canvas.width = settings.particles.size;
+                canvas.height = settings.particles.size;
+
+                // helper function to create the path
+                function to(t) {
+                    const point = pointOnHeart(t);
+                    point.x =
+                        settings.particles.size / 2 +
+                        (point.x * settings.particles.size) / 350;
+                    point.y =
+                        settings.particles.size / 2 -
+                        (point.y * settings.particles.size) / 350;
+                    return point;
+                }
+
+                // create the path
+                context.beginPath();
+                let t = -Math.PI;
+                let point = to(t);
+                context.moveTo(point.x, point.y);
+                while (t < Math.PI) {
+                    t += 0.01; // baby steps!
+                    point = to(t);
+                    context.lineTo(point.x, point.y);
+                }
+                context.closePath();
+                // create the fill
+                context.fillStyle = "#ea80b0";
+                context.fill();
+                // create the image
+                const image = new Image();
+                image.src = canvas.toDataURL();
+                return image;
+            })();
+
+            // render that thing!
+            function render() {
+                // next animation frame
+                requestAnimationFrame(render);
+
+                // update time
+                const newTime = new Date().getTime() / 1000,
+                    deltaTime = newTime - (time || newTime);
+                time = newTime;
+
+                // clear canvas
+                context.clearRect(0, 0, canvas.width, canvas.height);
+
+                // create new particles
+                const amount = particleRate * deltaTime;
+                for (let i = 0; i < amount; i++) {
+                    const pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
+                    const dir = pos.clone().length(settings.particles.velocity);
+                    particles.add(
+                        canvas.width / 2 + pos.x,
+                        canvas.height / 2 - pos.y,
+                        dir.x,
+                        -dir.y
+                    );
+                }
+
+                // update and draw particles
+                particles.update(deltaTime);
+                particles.draw(context, image);
+            }
+
+            // handle (re-)sizing of the canvas
+            function onResize() {
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+            }
+
+            window.onresize = onResize;
+
+            // delay rendering bootstrap
+            setTimeout(function () {
+                onResize();
+                render();
+            }, 10);
+        })(document.getElementById("pinkboard"));
+    }
+
+</script>
+<!-- 星空js -->
+<script>
+    function xingkong() {
+        window.requestAnimationFrame =
+            window.requestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.msRequestAnimationFrame;
+
+        const starDensity = 0.216;
+        const speedCoeff = 0.05;
+        let width;
+        let height;
+        let starCount;
+        let circleRadius;
+        let circleCenter;
+        let first = true;
+        const giantColor = "180,184,240";
+        const starColor = "226,225,142";
+        const cometColor = "226,225,224";
+        const canva = document.getElementById("universe");
+        canva.style.zIndex = 200;
+        const stars = [];
+
+        windowResizeHandler();
+        window.addEventListener("resize", windowResizeHandler, false);
+
+        createUniverse();
+
+        function createUniverse() {
+            universe = canva.getContext("2d");
+
+            for (let i = 0; i < starCount; i++) {
+                stars[i] = new Star();
+                stars[i].reset();
+            }
+
+            draw();
+        }
+
+        function draw() {
+            universe.clearRect(0, 0, width, height);
+
+            const starsLength = stars.length;
+
+            for (let i = 0; i < starsLength; i++) {
+                const star = stars[i];
+                star.move();
+                star.fadeIn();
+                star.fadeOut();
+                star.draw();
+            }
+
+            window.requestAnimationFrame(draw);
+        }
+
+        function Star() {
+            this.reset = function () {
+                this.giant = getProbability(3);
+                this.comet = this.giant || first ? false : getProbability(10);
+                this.x = getRandInterval(0, width - 10);
+                this.y = getRandInterval(0, height);
+                this.r = getRandInterval(1.1, 2.6);
+                this.dx =
+                    getRandInterval(speedCoeff, 6 * speedCoeff) +
+                    (this.comet + 1 - 1) * speedCoeff * getRandInterval(50, 120) +
+                    speedCoeff * 2;
+                this.dy =
+                    -getRandInterval(speedCoeff, 6 * speedCoeff) -
+                    (this.comet + 1 - 1) * speedCoeff * getRandInterval(50, 120);
+                this.fadingOut = null;
+                this.fadingIn = true;
+                this.opacity = 0;
+                this.opacityTresh = getRandInterval(
+                    0.2,
+                    1 - (this.comet + 1 - 1) * 0.4
+                );
+                this.do = getRandInterval(0.0005, 0.002) + (this.comet + 1 - 1) * 0.001;
+            };
+
+            this.fadeIn = function () {
+                if (this.fadingIn) {
+                    this.fadingIn = this.opacity > this.opacityTresh ? false : true;
+                    this.opacity += this.do;
+                }
+            };
+
+            this.fadeOut = function () {
+                if (this.fadingOut) {
+                    this.fadingOut = this.opacity < 0 ? false : true;
+                    this.opacity -= this.do / 2;
+                    if (this.x > width || this.y < 0) {
+                        this.fadingOut = false;
+                        this.reset();
+                    }
+                }
+            };
+
+            this.draw = function () {
+                universe.beginPath();
+
+                if (this.giant) {
+                    universe.fillStyle = "rgba(" + giantColor + "," + this.opacity + ")";
+                    universe.arc(this.x, this.y, 2, 0, 2 * Math.PI, false);
+                } else if (this.comet) {
+                    universe.fillStyle = "rgba(" + cometColor + "," + this.opacity + ")";
+                    universe.arc(this.x, this.y, 1.5, 0, 2 * Math.PI, false);
+
+                    //comet tail
+                    for (let i = 0; i < 30; i++) {
+                        universe.fillStyle =
+                            "rgba(" +
+                            cometColor +
+                            "," +
+                            (this.opacity - (this.opacity / 20) * i) +
+                            ")";
+                        universe.rect(
+                            this.x - (this.dx / 4) * i,
+                            this.y - (this.dy / 4) * i - 2,
+                            2,
+                            2
+                        );
+                        universe.fill();
+                    }
+                } else {
+                    universe.fillStyle = "rgba(" + starColor + "," + this.opacity + ")";
+                    universe.rect(this.x, this.y, this.r, this.r);
+                }
+
+                universe.closePath();
+                universe.fill();
+            };
+
+            this.move = function () {
+                this.x += this.dx;
+                this.y += this.dy;
+                if (this.fadingOut === false) {
+                    this.reset();
+                }
+                if (this.x > width - width / 4 || this.y < 0) {
+                    this.fadingOut = true;
+                }
+            };
+
+            (function () {
+                setTimeout(function () {
+                    first = false;
+                }, 50);
+            })();
+        }
+
+        function getProbability(percents) {
+            return Math.floor(Math.random() * 1000) + 1 < percents * 10;
+        }
+
+        function getRandInterval(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function windowResizeHandler() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            starCount = width * starDensity;
+            circleRadius = width > height ? height / 2 : width / 2;
+            circleCenter = {
+                x: width / 2,
+                y: height / 2,
+            };
+
+            canva.setAttribute("width", width);
+            canva.setAttribute("height", height);
+        }
+    }
+
+</script>
+<!------------------------------------------------------------------------------end-->
+
+</body>
+</html>

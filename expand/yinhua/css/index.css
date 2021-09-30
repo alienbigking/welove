@@ -1,0 +1,107 @@
+.cherry img {
+	width: 50px;
+	height: 50px;
+	margin-top: -5%;
+	opacity: 0.5;
+	position: fixed;
+	z-index: 99;
+
+}
+
+
+body {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	width: 100vw;
+	height: 100vh;
+	/*background-image: url("./img/yinghua.jpg");*/
+	background-repeat: no-repeat;
+	background-size: cover;
+	font-family: 'love';
+}
+
+@font-face {
+	font-family: 'love';
+	src: url('./yayuti.otf');
+}
+
+.box {
+	width: 100vw;
+	height: 95vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	flex-direction: column;
+	z-index: -1;
+}
+
+.box_contain {
+	width: auto;
+	height: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	flex-direction: column;
+	background: rgba(255, 192, 203,0.2);
+	border-radius: 16px;
+}
+
+.des {
+	font-size: 18px;
+	line-height: 40px;
+	padding: 0 20px;
+	font-family: 'love';
+	color: #fff;
+}
+
+.time {
+	font-size:29px;
+	font-weight: bolder;
+	color: #fff;
+	letter-spacing: 3px;
+}
+
+.fade-enter-active, .fade-leave-active {
+	transition: opacity 2s;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+	opacity: 0;
+}
+
+.gifImg {
+      height: 200px;
+}
+
+
+
+.popup_error {
+	position: fixed;
+	font-size: 18px;
+	height: auto;
+	text-align: center;
+	width: auto;
+	background-color: white;
+	border-radius: 18px;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 1000;
+	padding: 20px 30px;
+	line-height: 30px;
+}
+
+.popup_over {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	opacity: 0.7; //é€æ˜Žåº¦ä¸º70%
+	filter: alpha(opacity=70);
+	top: 0;
+	left: 0;
+	z-index: 999;
+	background-color: #111111;
+}
